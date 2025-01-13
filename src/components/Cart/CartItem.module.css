@@ -1,0 +1,58 @@
+.list {
+  background-color: #575757;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.list h3 {
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.list .price {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.item--price {
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.list .details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.details .quantity {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.quantity .actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5rem 0;
+}
+
+.actions button {
+  color: #fff;
+  background: transparent;
+  border: 1px solid #fff;
+  margin-left: 0.5rem;
+  padding: 0.15rem 1rem;
+}
+
+.actions button:hover,
+.actions button:active {
+  background-color: #4b4b4b;
+  color: white;
+}

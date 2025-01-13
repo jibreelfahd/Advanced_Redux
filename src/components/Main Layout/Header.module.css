@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10%;
+  height: 5rem;
+  max-width: 100%;
+  background: #1d1d1d;
+}
+
+.header h1 {
+  color: #fff;
+}
+
+.header ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

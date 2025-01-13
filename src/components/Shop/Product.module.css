@@ -1,0 +1,22 @@
+.product--item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.product--item span {
+  background: #313131;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50px;
+  color: #fff;
+}
+.description {
+  margin: 1rem 0;
+}
+
+.actions {
+  text-align: right;
+}
