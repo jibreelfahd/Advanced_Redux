@@ -1,63 +1,48 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Layout from "./components/Main Layout/Layout";
 import Cart from "./components/Cart/Cart";
 import ShopContent from "./components/Shop/ShopContent";
-import { cartActions } from "./store/cart";
-
+import Notification from "./components/UI/Notification";
+import { sendCartData, fetchCartData } from "./store/cart-actions";
 let isInitial = true;
 
 const App = () => {
   const showCart = useSelector((state) => state.showCart.showCart);
+  const showNotification = useSelector(
+    (state) => state.showCart.showNotification
+  );
   const cart = useSelector((state) => state.cartOperations);
-  const dispatch = useDispatch();
-  const isSyncing = useRef(false);
 
+  const dispatch = useDispatch();
+
+  // @desc: dispatch action to fetch data from the db and replace redux store
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
+  // @desc: dispatch action to send data to db 
   useEffect(() => {
     if (isInitial) {
       isInitial = false;
       return;
     }
 
-    const debounceTimeout = setTimeout(() => {
-      const sendCartData = async () => {
-        try {
-          if (isSyncing.current) return;
-
-          isSyncing.current = true;
-
-          const response = await fetch("http://localhost:8080/add-to-cart", {
-            method: "PUT",
-            body: JSON.stringify({ cart }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Sending cart data failed");
-          }
-
-          const { storeCart } = await response.json();
-          console.log("executed times");
-
-          dispatch(cartActions.replaceCart(storeCart));
-        } catch (error) {
-          console.log(error);
-        } finally {
-          isSyncing.current = false;
-        }
-      };
-
-      sendCartData();
-    }, 500);
-
-    return () => clearTimeout(debounceTimeout);
+    if (cart.changed) {
+      dispatch(sendCartData(cart));
+    }
   }, [cart, dispatch]);
 
   return (
     <>
+      {showNotification && (
+        <Notification
+          status={showNotification.status}
+          title={showNotification.title}
+          message={showNotification.message}
+        />
+      )}
       <Layout>
         {showCart && <Cart />}
         <ShopContent />

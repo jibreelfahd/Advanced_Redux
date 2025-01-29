@@ -2,8 +2,7 @@ import Cart from "../models/cartModel.js";
 
 export const addToCart = async (req, res) => {
   try {
-    const { cart } = req.body;
-    console.log(cart)
+    const { items, totalQuantity } = req.body;
 
     let storeCart;
 
@@ -11,21 +10,19 @@ export const addToCart = async (req, res) => {
 
     if (!storeCart) {
       storeCart = await Cart.create({
-        items: cart.items,
-        totalQuantity: cart.totalQuantity,
+        items: items,
+        totalQuantity: totalQuantity,
       });
 
       return res.status(201).json({ storeCart });
     }
 
-    for (const items of cart.items) {
-      let { itemID, name, price, totalPrice, quantity } = items;
+    for (const item of items) {
+      let { itemID, name, price, totalPrice, quantity } = item;
 
       const findExistingCartItemIndex = storeCart.items.find(
         (item) => item.itemID === itemID
       );
-
-      // console.log(findExistingCartItemIndex);
 
       if (!findExistingCartItemIndex) {
         storeCart.items.push({
@@ -36,8 +33,8 @@ export const addToCart = async (req, res) => {
           quantity,
         });
       } else {
-        findExistingCartItemIndex.totalPrice += price;
-        findExistingCartItemIndex.quantity += quantity;
+        findExistingCartItemIndex.totalPrice = price;
+        findExistingCartItemIndex.quantity = quantity;
       }
     }
 
@@ -55,7 +52,11 @@ export const addToCart = async (req, res) => {
 
 export const getAllCart = async (req, res) => {
   try {
-    const cart = await Cart.find({});
+    const cart = await Cart.findOne({});
+
+    if (!cart) {
+      return;
+    }
     res.status(200).json({ cart });
   } catch (error) {
     res.status(500).json("Error from get all cart items", error);
@@ -63,4 +64,27 @@ export const getAllCart = async (req, res) => {
   }
 };
 
-export const removeFromCart = async (req, res) => {};
+export const removeFromCart = async (req, res) => {
+  try {
+    const { id } = req.body;
+    console.log(id);
+
+    const findCart = await Cart.findOne({});
+
+    if (!findCart) {
+      return;
+    }
+
+    const findItem = findCart.items.find((item) => item.itemID === id);
+
+    if (findItem) {
+      const find = findCart.items.filter((item) => item.itemID !== findItem.itemID);
+      console.log(find)
+    }
+
+    res.status(200).json({ message: "Item removed succesfully " });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Error from get remove items", error);
+  }
+};

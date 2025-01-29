@@ -1,12 +1,13 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { cartActions } from "../../store/cart";
+import { deleteCartData } from "../../store/cart-actions";
 import styles from "./CartItem.module.css";
 
 const CartItem = ({ id, name, totalPrice, price, quantity }) => {
+  const cart = useSelector((state) => state.cartOperations);
   const dispatch = useDispatch();
-
   const addToCartHandler = () => {
     dispatch(
       cartActions.addToCart({
@@ -16,10 +17,26 @@ const CartItem = ({ id, name, totalPrice, price, quantity }) => {
       })
     );
   };
+
+  console.log(cart.itemIsOne)
+
+   // @desc: dispatch action to remove an item from the db
+   useEffect(() => {
+    if (cart.itemIsOne) {
+      dispatch(deleteCartData(id));
+    }
+  }, [cart, id, dispatch]);
+
   const removeFromCartHandler = () => {
-    dispatch(cartActions.deleteCart({
-      id
-    }));
+    const timeout = setTimeout(() => {
+      dispatch(
+        cartActions.deleteCart({
+          id,
+        })
+      );
+    }, 500);
+
+    return  () => clearTimeout(timeout);
   };
   return (
     <li className={styles.list}>
