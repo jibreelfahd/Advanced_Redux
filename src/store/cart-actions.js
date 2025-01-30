@@ -87,10 +87,10 @@ export const deleteCartData = (id) => {
     const removeCartItem = async () => {
       const response = await fetch("http://localhost:8080/remove-from-cart", {
         method: "DELETE",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify(id),
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       const data = await response.json();
@@ -99,9 +99,15 @@ export const deleteCartData = (id) => {
     };
 
     try {
-      const cart = await removeCartItem();
-      console.log(cart);
+      await removeCartItem();
     } catch (error) {
+      dispatch(
+        showCartActions.showNotificationHandler({
+          status: "error",
+          title: "Deleting Item Failed!!",
+          message: "Deleting Item from cart failed",
+        })
+      );
       console.log(error);
     }
   };

@@ -67,7 +67,7 @@ export const getAllCart = async (req, res) => {
 export const removeFromCart = async (req, res) => {
   try {
     const { id } = req.body;
-    console.log(id);
+    console.log(id)
 
     const findCart = await Cart.findOne({});
 
@@ -75,16 +75,30 @@ export const removeFromCart = async (req, res) => {
       return;
     }
 
-    const findItem = findCart.items.find((item) => item.itemID === id);
+    const findItem = findCart.items.filter((item) => item.itemID === id);
 
-    if (findItem) {
-      const find = findCart.items.filter((item) => item.itemID !== findItem.itemID);
-      console.log(find)
+    if (!findItem) {
+      return;
     }
+
+    findCart.items = findCart.items.filter((item) => item.itemID !== id);
+
+    if (findCart.items.length === 0) {
+      await Cart.deleteOne({ _id: findCart._id})
+    }
+
+    console.log(findCart.items.length)
+
+    findCart.totalQuantity = findCart.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+    await findCart.save();
 
     res.status(200).json({ message: "Item removed succesfully " });
   } catch (error) {
     console.log(error);
-    res.status(500).json("Error from get remove items", error);
+    res.status(500).json({ errorMessage: "Error from get remove items", error});
   }
 };

@@ -8,6 +8,7 @@ import styles from "./CartItem.module.css";
 const CartItem = ({ id, name, totalPrice, price, quantity }) => {
   const cart = useSelector((state) => state.cartOperations);
   const dispatch = useDispatch();
+
   const addToCartHandler = () => {
     dispatch(
       cartActions.addToCart({
@@ -18,26 +19,25 @@ const CartItem = ({ id, name, totalPrice, price, quantity }) => {
     );
   };
 
-  console.log(cart.itemIsOne)
-
-   // @desc: dispatch action to remove an item from the db
-   useEffect(() => {
-    if (cart.itemIsOne) {
-      dispatch(deleteCartData(id));
-    }
-  }, [cart, id, dispatch]);
-
   const removeFromCartHandler = () => {
-    const timeout = setTimeout(() => {
-      dispatch(
-        cartActions.deleteCart({
-          id,
-        })
-      );
-    }, 500);
-
-    return  () => clearTimeout(timeout);
+    dispatch(cartActions.setItemToRemove(id));
+    dispatch(
+      cartActions.deleteCart({
+        id,
+      })
+    );
   };
+
+  // @desc: dispatch action to remove an item from the db
+  useEffect(() => {
+    if (cart.itemIsOne && cart.itemToRemove) {
+      setTimeout(() => {
+        dispatch(deleteCartData(cart.itemToRemove));
+      }, 100);
+      console.log("cart is true", cart.itemToRemove);
+    }
+  }, [cart.itemIsOne, cart.itemToRemove, dispatch]);
+
   return (
     <li className={styles.list}>
       <header>
